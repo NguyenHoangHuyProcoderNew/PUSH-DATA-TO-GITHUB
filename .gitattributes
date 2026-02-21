@@ -1,0 +1,2 @@
+net8.0-windows/python/Lib/site-packages/_polars_runtime_32/_polars_runtime.pyd filter=lfs diff=lfs merge=lfs -text
+net8.0-windows/python/Lib/site-packages/torch/lib/torch_cpu.dll filter=lfs diff=lfs merge=lfs -text
