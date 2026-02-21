@@ -1,0 +1,396 @@
+<Window x:Class="PushDataToGitHub.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Push Data To GitHub"
+        Icon="Assets/AppIcon.ico"
+        Height="840"
+        Width="1260"
+        MinHeight="760"
+        MinWidth="1100"
+        Background="#F4F7FC"
+        FontFamily="Bahnschrift"
+        Foreground="#0F172A">
+    <Window.Resources>
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="BorderBrushColor" Color="#D7E0F0" />
+        <SolidColorBrush x:Key="MutedBrush" Color="#4B5563" />
+        <SolidColorBrush x:Key="InputBackgroundBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="InputBorderBrush" Color="#AEC0DF" />
+        <SolidColorBrush x:Key="InputForegroundBrush" Color="#0F172A" />
+        <SolidColorBrush x:Key="LogBackgroundBrush" Color="#F8FAFF" />
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource InputBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource InputForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CaretBrush" Value="#0F172A" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource InputBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource InputForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="#0F172A" />
+                        <Setter Property="Background" Value="#FFFFFF" />
+                        <Style.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter Property="Background" Value="#DBEAFE" />
+                                <Setter Property="Foreground" Value="#0F172A" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Background" Value="{StaticResource InputBackgroundBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource InputForegroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource InputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#0F172A" />
+        </Style>
+
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="{StaticResource LogBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="#0F172A" />
+        </Style>
+
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{StaticResource LogBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrushColor}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="#0F172A" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Background" Value="#1D4ED8" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#2563EB" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrushColor}"
+                BorderThickness="1"
+                CornerRadius="14"
+                Padding="18"
+                Margin="0,0,0,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Push Dữ Liệu Lên GitHub" FontSize="28" FontWeight="Bold" />
+                    <TextBlock Text="Bản hoàn chỉnh: mirror push an toàn, LFS tự động, Browser/PAT, rebase retry, conflict + skip list"
+                               Margin="0,6,0,0"
+                               Foreground="{StaticResource MutedBrush}" />
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Background="#E0F2FE"
+                        BorderBrush="#7DD3FC"
+                        BorderThickness="1"
+                        CornerRadius="999"
+                        Padding="14,8"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="{Binding StatusMessage}"
+                               FontWeight="SemiBold"
+                               Foreground="#0B4A6F" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrushColor}"
+                BorderThickness="1"
+                CornerRadius="14"
+                Padding="18"
+                Margin="0,0,0,14">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="210" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Grid.ColumnSpan="3"
+                           Text="Cấu Hình Push"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,14" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Thư mục local" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" />
+                <Border Grid.Row="1"
+                        Grid.Column="1"
+                        BorderBrush="{StaticResource InputBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Background="{StaticResource InputBackgroundBrush}"
+                        AllowDrop="True"
+                        PreviewDragOver="FolderDropZone_OnDragOver"
+                        Drop="FolderDropZone_OnDrop">
+                    <TextBox BorderThickness="0"
+                             Background="Transparent"
+                             Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}"
+                             ToolTip="Kéo thả thư mục vào đây hoặc dùng nút Chọn thư mục." />
+                </Border>
+                <Button Grid.Row="1"
+                        Grid.Column="2"
+                        Content="Chọn thư mục"
+                        Margin="10,0,0,0"
+                        Command="{Binding BrowseFolderCommand}" />
+
+                <TextBlock Grid.Row="2"
+                           Grid.Column="0"
+                           Text="URL GitHub repo"
+                           Margin="0,12,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedBrush}" />
+                <TextBox Grid.Row="2"
+                         Grid.Column="1"
+                         Grid.ColumnSpan="2"
+                         Margin="0,12,0,0"
+                         Text="{Binding RepositoryUrl, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Row="3"
+                           Grid.Column="0"
+                           Text="Branch đích"
+                           Margin="0,12,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedBrush}" />
+                <TextBox Grid.Row="3"
+                         Grid.Column="1"
+                         Margin="0,12,0,0"
+                         Width="220"
+                         HorizontalAlignment="Left"
+                         Text="{Binding BranchName, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Grid.Row="3"
+                          Grid.Column="2"
+                          Margin="10,12,0,0"
+                          VerticalAlignment="Center"
+                          IsChecked="{Binding IsSafeModeEnabled}">
+                    <TextBlock Text="Safe mode (chặn force push main/master)" />
+                </CheckBox>
+
+                <TextBlock Grid.Row="4"
+                           Grid.Column="0"
+                           Text="Xác thực GitHub"
+                           Margin="0,12,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedBrush}" />
+                <ComboBox Grid.Row="4"
+                          Grid.Column="1"
+                          Grid.ColumnSpan="2"
+                          Margin="0,12,0,0"
+                          ItemsSource="{Binding AuthenticationModeOptions}"
+                          SelectedItem="{Binding SelectedAuthenticationModeOption}"
+                          DisplayMemberPath="DisplayName" />
+
+                <TextBlock Grid.Row="5"
+                           Grid.Column="0"
+                           Text="PAT (nếu dùng)"
+                           Margin="0,12,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedBrush}"
+                           Visibility="{Binding IsPatMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <PasswordBox Grid.Row="5"
+                             Grid.Column="1"
+                             Grid.ColumnSpan="2"
+                             Margin="0,12,0,0"
+                             PasswordChanged="PersonalAccessTokenBox_OnPasswordChanged"
+                             Visibility="{Binding IsPatMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBlock Grid.Row="6"
+                           Grid.Column="0"
+                           Text="Commit message"
+                           Margin="0,12,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource MutedBrush}" />
+                <StackPanel Grid.Row="6"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Margin="0,12,0,0">
+                    <ComboBox ItemsSource="{Binding CommitMessageModeOptions}"
+                              SelectedItem="{Binding SelectedCommitMessageModeOption}"
+                              DisplayMemberPath="DisplayName" />
+                    <TextBox Margin="0,10,0,0"
+                             Text="{Binding ManualCommitMessage, UpdateSourceTrigger=PropertyChanged}"
+                             Visibility="{Binding IsManualCommitMode, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             ToolTip="Nhập commit message thủ công." />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrushColor}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="18"
+                    Margin="0,0,14,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Nhật Ký Thực Thi (chi tiết debug)"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,12" />
+
+                    <ListView x:Name="ExecutionLogsListView"
+                              Grid.Row="1"
+                              ItemsSource="{Binding Logs}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Thời gian" Width="110" DisplayMemberBinding="{Binding Timestamp}" />
+                                <GridViewColumn Header="Mức" Width="90" DisplayMemberBinding="{Binding Level}" />
+                                <GridViewColumn Header="Nội dung" Width="560" DisplayMemberBinding="{Binding Message}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrushColor}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Nhật Ký GitHub (raw git/github)"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,12" />
+
+                    <TabControl Grid.Row="1">
+                        <TabItem Header="Nhật Ký GitHub">
+                            <ListBox x:Name="GitHubRawLogsListBox"
+                                     ItemsSource="{Binding GitHubLogs}"
+                                     FontFamily="Cascadia Mono"
+                                     FontSize="13"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                        </TabItem>
+                        <TabItem Header="File Bỏ Qua">
+                            <ListBox ItemsSource="{Binding SkippedFiles}" />
+                        </TabItem>
+                        <TabItem Header="File Conflict">
+                            <ListBox ItemsSource="{Binding ConflictFiles}" />
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="3"
+                Background="#EEF3FB"
+                BorderBrush="{StaticResource BorderBrushColor}"
+                BorderThickness="1"
+                CornerRadius="10"
+                Padding="12,8"
+                Margin="0,14,0,0">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
+                    <Button Content="Kiểm tra Git/Git LFS"
+                            Width="200"
+                            Command="{Binding RunPreflightCommand}" />
+                    <Button Content="Push Ngay"
+                            Width="140"
+                            Margin="10,0,0,0"
+                            Background="#0F766E"
+                            Command="{Binding PushCommand}" />
+                    <Button Content="Xóa log"
+                            Width="120"
+                            Margin="10,0,0,0"
+                            Background="#475569"
+                            Command="{Binding ClearLogsCommand}" />
+                </StackPanel>
+                <TextBlock DockPanel.Dock="Right"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}"
+                           Text="LFS tự track file &gt;100MB, auto skip file quá giới hạn push." />
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
