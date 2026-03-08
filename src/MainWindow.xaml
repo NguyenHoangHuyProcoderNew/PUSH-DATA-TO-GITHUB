@@ -82,6 +82,8 @@
             <Setter Property="Foreground" Value="#0F172A" />
         </Style>
 
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
         <Style TargetType="Button">
             <Setter Property="Padding" Value="14,10" />
             <Setter Property="Margin" Value="0" />

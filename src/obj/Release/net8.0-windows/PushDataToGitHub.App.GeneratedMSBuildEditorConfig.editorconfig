@@ -14,6 +14,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PushDataToGitHub.App
-build_property.ProjectDir = d:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\
+build_property.ProjectDir = D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
