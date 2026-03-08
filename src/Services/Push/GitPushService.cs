@@ -92,7 +92,7 @@ public sealed class GitPushService : IGitPushService
             {
                 log("INFO", $"Đang clone branch '{request.BranchName}' từ remote...");
                 ProcessCommandResult cloneResult = await RunGitAsync(
-                    $"-c core.longpaths=true -c core.autocrlf=false -c core.safecrlf=false clone --single-branch --branch {Quote(request.BranchName)} {Quote(request.RepositoryUrl)} {Quote(tempRepositoryPath)}",
+                    $"-c core.longpaths=true -c core.autocrlf=false -c core.safecrlf=false clone --progress --single-branch --branch {Quote(request.BranchName)} {Quote(request.RepositoryUrl)} {Quote(tempRepositoryPath)}",
                     cancellationToken: cancellationToken);
                 LogGitCommandResult(log, $"clone branch '{request.BranchName}'", cloneResult);
 
@@ -1022,7 +1022,8 @@ public sealed class GitPushService : IGitPushService
         Action<string, string> log,
         CancellationToken cancellationToken)
     {
-        string pushArguments = $"push -u origin {Quote(request.BranchName)}";
+        // --progress: buộc git xuất progress bar (Counting/Writing objects) dù stderr bị redirect
+        string pushArguments = $"push --progress -u origin {Quote(request.BranchName)}";
         _forcePushGuard.EnsureAllowed(pushArguments, request.BranchName, request.IsSafeModeEnabled);
 
         log("INFO", $"[GIT] chạy lệnh push lần 1: git {pushArguments}");
@@ -1042,7 +1043,7 @@ public sealed class GitPushService : IGitPushService
         log("INFO", "Thử pull --rebase rồi push lại...");
 
         ProcessCommandResult rebaseResult = await RunGitAsync(
-            $"pull origin {Quote(request.BranchName)} --rebase",
+            $"pull --progress origin {Quote(request.BranchName)} --rebase",
             repositoryPath,
             cancellationToken);
         LogGitCommandResult(log, "git pull --rebase", rebaseResult);
@@ -1154,7 +1155,7 @@ public sealed class GitPushService : IGitPushService
         log("INFO", $"Đang đồng bộ branch '{branchName}' về folder nguồn...");
 
         ProcessCommandResult fetchResult = await RunGitAsync(
-            "fetch origin",
+            "fetch --progress origin",
             sourceFolderPath,
             cancellationToken);
         LogGitCommandResult(log, "git fetch origin (source)", fetchResult);
@@ -1165,16 +1166,33 @@ public sealed class GitPushService : IGitPushService
             return;
         }
 
-        // -B: tạo mới nếu chưa có, hoặc reset về remote ref nếu đã có
-        ProcessCommandResult checkoutResult = await RunGitAsync(
-            $"checkout -B {Quote(branchName)} origin/{Quote(branchName)}",
+        // Dùng git branch -f + git symbolic-ref HEAD thay vì git checkout -B.
+        // git checkout -B có thể thất bại nếu source folder có uncommitted changes (tracked files).
+        // Cách này chỉ thay đổi metadata git (branch pointer + HEAD), không đụng working tree.
+
+        // Bước 1: tạo hoặc force-reset local branch trỏ tới remote ref
+        ProcessCommandResult branchResult = await RunGitAsync(
+            $"branch -f {Quote(branchName)} origin/{branchName}",
             sourceFolderPath,
             cancellationToken);
-        LogGitCommandResult(log, $"git checkout -B {branchName} (source)", checkoutResult);
+        LogGitCommandResult(log, $"git branch -f {branchName} origin/{branchName} (source)", branchResult);
 
-        if (!checkoutResult.IsSuccess)
+        if (!branchResult.IsSuccess)
         {
-            log("WARN", $"Không thể tạo branch local '{branchName}' ở folder nguồn. {Fallback(checkoutResult)}");
+            log("WARN", $"Không thể tạo branch '{branchName}' ở folder nguồn. {Fallback(branchResult)}");
+            return;
+        }
+
+        // Bước 2: cập nhật HEAD trỏ tới branch mới, không thay đổi working tree
+        ProcessCommandResult headResult = await RunGitAsync(
+            $"symbolic-ref HEAD refs/heads/{branchName}",
+            sourceFolderPath,
+            cancellationToken);
+        LogGitCommandResult(log, $"git symbolic-ref HEAD refs/heads/{branchName} (source)", headResult);
+
+        if (!headResult.IsSuccess)
+        {
+            log("WARN", $"Không thể cập nhật HEAD về '{branchName}': {Fallback(headResult)}");
             return;
         }
 

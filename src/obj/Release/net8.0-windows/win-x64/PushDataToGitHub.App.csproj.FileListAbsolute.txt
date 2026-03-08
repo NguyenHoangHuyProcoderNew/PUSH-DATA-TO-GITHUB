@@ -491,7 +491,6 @@ D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\Pu
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushDataToGitHub.App.AssemblyInfoInputs.cache
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushDataToGitHub.App.AssemblyInfo.cs
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushDataToGitHub.App.csproj.CoreCompileInputs.cache
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushDataToGitHub.App.sourcelink.json
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushData.FDE916CE.Up2Date
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\PushDataToGitHub.App.dll
 D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\src\obj\Release\net8.0-windows\win-x64\refint\PushDataToGitHub.App.dll

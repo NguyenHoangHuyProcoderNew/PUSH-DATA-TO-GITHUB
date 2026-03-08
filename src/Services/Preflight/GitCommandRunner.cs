@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace PushDataToGitHub.App.Services.Preflight;
@@ -33,24 +34,6 @@ public sealed class GitCommandRunner : IGitCommandRunner
         StringBuilder outputBuilder = new();
         StringBuilder errorBuilder = new();
 
-        process.OutputDataReceived += (_, eventArgs) =>
-        {
-            if (!string.IsNullOrEmpty(eventArgs.Data))
-            {
-                outputBuilder.AppendLine(eventArgs.Data);
-                standardOutputCallback?.Invoke(eventArgs.Data);
-            }
-        };
-
-        process.ErrorDataReceived += (_, eventArgs) =>
-        {
-            if (!string.IsNullOrEmpty(eventArgs.Data))
-            {
-                errorBuilder.AppendLine(eventArgs.Data);
-                standardErrorCallback?.Invoke(eventArgs.Data);
-            }
-        };
-
         try
         {
             if (!process.Start())
@@ -58,9 +41,13 @@ public sealed class GitCommandRunner : IGitCommandRunner
                 return new ProcessCommandResult(-1, string.Empty, "Không thể khởi chạy tiến trình git.");
             }
 
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-            await process.WaitForExitAsync(cancellationToken);
+            // Dùng custom reader xử lý cả \r (progress bar git) và \n (dòng thường).
+            // BeginOutputReadLine/ErrorReadLine chỉ xử lý \n nên bỏ sót
+            // các dòng "Counting objects:", "Writing objects:..." mà git viết bằng \r.
+            Task stdoutTask = ReadStreamAsync(process.StandardOutput, outputBuilder, standardOutputCallback, cancellationToken);
+            Task stderrTask = ReadStreamAsync(process.StandardError, errorBuilder, standardErrorCallback, cancellationToken);
+
+            await Task.WhenAll(process.WaitForExitAsync(cancellationToken), stdoutTask, stderrTask);
 
             return new ProcessCommandResult(
                 process.ExitCode,
@@ -74,5 +61,74 @@ public sealed class GitCommandRunner : IGitCommandRunner
                 outputBuilder.ToString().Trim(),
                 exception.Message);
         }
+    }
+
+    /// <summary>
+    /// Đọc stream thủ công, xử lý cả \r và \n là line separator.
+    /// Git dùng \r để ghi đè dòng progress (Counting objects, Writing objects...).
+    /// Nếu dùng BeginOutputReadLine, các dòng này sẽ bị bỏ qua cho đến khi có \n cuối cùng.
+    /// </summary>
+    private static async Task ReadStreamAsync(
+        StreamReader reader,
+        StringBuilder fullOutput,
+        Action<string>? callback,
+        CancellationToken cancellationToken)
+    {
+        char[] buffer = new char[4096];
+        StringBuilder lineBuffer = new();
+
+        try
+        {
+            int read;
+            while ((read = await reader.ReadAsync(buffer, 0, buffer.Length).ConfigureAwait(false)) > 0)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                for (int i = 0; i < read; i++)
+                {
+                    char c = buffer[i];
+
+                    if (c == '\n')
+                    {
+                        // Bỏ '\r' ở cuối nếu là chuỗi \r\n
+                        if (lineBuffer.Length > 0 && lineBuffer[lineBuffer.Length - 1] == '\r')
+                        {
+                            lineBuffer.Length--;
+                        }
+
+                        FlushLine(lineBuffer, fullOutput, callback);
+                    }
+                    else if (c == '\r')
+                    {
+                        // Carriage return đơn = dòng progress (git ghi đè lên dòng trước)
+                        FlushLine(lineBuffer, fullOutput, callback);
+                    }
+                    else
+                    {
+                        lineBuffer.Append(c);
+                    }
+                }
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Bỏ qua: process vẫn chạy nền
+        }
+
+        // Flush phần còn lại trong buffer chưa kết thúc bằng newline
+        FlushLine(lineBuffer, fullOutput, callback);
+    }
+
+    private static void FlushLine(StringBuilder lineBuffer, StringBuilder fullOutput, Action<string>? callback)
+    {
+        if (lineBuffer.Length == 0)
+        {
+            return;
+        }
+
+        string line = lineBuffer.ToString();
+        lineBuffer.Clear();
+        fullOutput.AppendLine(line);
+        callback?.Invoke(line);
     }
 }
