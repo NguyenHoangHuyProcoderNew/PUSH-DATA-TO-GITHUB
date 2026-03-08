@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB\\src\\PushDataToGitHub.App\\PushDataToGitHub.App.csproj": {}
+    "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB-main\\src\\PushDataToGitHub.App.csproj": {}
   },
   "projects": {
-    "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB\\src\\PushDataToGitHub.App\\PushDataToGitHub.App.csproj": {
+    "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB-main\\src\\PushDataToGitHub.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB\\src\\PushDataToGitHub.App\\PushDataToGitHub.App.csproj",
+        "projectUniqueName": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB-main\\src\\PushDataToGitHub.App.csproj",
         "projectName": "PushDataToGitHub.App",
-        "projectPath": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB\\src\\PushDataToGitHub.App\\PushDataToGitHub.App.csproj",
+        "projectPath": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB-main\\src\\PushDataToGitHub.App.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB\\src\\PushDataToGitHub.App\\obj\\",
+        "outputPath": "D:\\MY PROJECT\\PUSH-DATA-TO-GITHUB-main\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -37,12 +37,19 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "11.0.100"
+        }
       },
       "frameworks": {
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "Microsoft.NET.ILLink.Tasks": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[8.0.24, )",
+              "autoReferenced": true
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -56,20 +63,16 @@
           "warn": true,
           "downloadDependencies": [
             {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.23, 8.0.23]"
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[8.0.24, 8.0.24]"
             },
             {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[8.0.23, 8.0.23]"
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[8.0.24, 8.0.24]"
             },
             {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.23, 8.0.23]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.23, 8.0.23]"
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+              "version": "[8.0.24, 8.0.24]"
             }
           ],
           "frameworkReferences": {
@@ -80,7 +83,12 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100-preview.1.26104.118/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.418/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }

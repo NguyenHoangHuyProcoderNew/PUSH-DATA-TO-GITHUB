@@ -1,0 +1,7 @@
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\PushDataToGitHub.App.pdb
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\D3DCompiler_47_cor3.dll
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\PenImc_cor3.dll
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\PresentationNative_cor3.dll
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\vcruntime140_cor3.dll
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\wpfgfx_cor3.dll
+D:\MY PROJECT\PUSH-DATA-TO-GITHUB-main\publish\PushDataToGitHub.App.exe

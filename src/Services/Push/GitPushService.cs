@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -236,12 +236,23 @@ public sealed class GitPushService : IGitPushService
             log("OK", "Tạo commit thành công.");
 
             log("INFO", "Đang push lên remote...");
-            return await PushWithRebaseRetryAsync(
+            PushResult pushResult = await PushWithRebaseRetryAsync(
                 request,
                 tempRepositoryPath,
                 skippedFiles,
                 log,
                 cancellationToken);
+
+            if (pushResult.IsSuccess)
+            {
+                await SyncSourceRepoBranchAsync(
+                    request.SourceFolderPath,
+                    request.BranchName,
+                    log,
+                    cancellationToken);
+            }
+
+            return pushResult;
         }
         catch (OperationCanceledException)
         {
@@ -1132,6 +1143,42 @@ public sealed class GitPushService : IGitPushService
         string text = $"{commandResult.StandardOutput}\n{commandResult.StandardError}";
         return text.Contains("nothing to commit", StringComparison.OrdinalIgnoreCase)
                || text.Contains("no changes added", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task SyncSourceRepoBranchAsync(
+        string sourceFolderPath,
+        string branchName,
+        Action<string, string> log,
+        CancellationToken cancellationToken)
+    {
+        log("INFO", $"Đang đồng bộ branch '{branchName}' về folder nguồn...");
+
+        ProcessCommandResult fetchResult = await RunGitAsync(
+            "fetch origin",
+            sourceFolderPath,
+            cancellationToken);
+        LogGitCommandResult(log, "git fetch origin (source)", fetchResult);
+
+        if (!fetchResult.IsSuccess)
+        {
+            log("WARN", $"Không thể fetch về folder nguồn: {Fallback(fetchResult)}");
+            return;
+        }
+
+        // -B: tạo mới nếu chưa có, hoặc reset về remote ref nếu đã có
+        ProcessCommandResult checkoutResult = await RunGitAsync(
+            $"checkout -B {Quote(branchName)} origin/{Quote(branchName)}",
+            sourceFolderPath,
+            cancellationToken);
+        LogGitCommandResult(log, $"git checkout -B {branchName} (source)", checkoutResult);
+
+        if (!checkoutResult.IsSuccess)
+        {
+            log("WARN", $"Không thể tạo branch local '{branchName}' ở folder nguồn. {Fallback(checkoutResult)}");
+            return;
+        }
+
+        log("OK", $"Đã tạo branch local '{branchName}' tracking origin/{branchName} tại folder nguồn.");
     }
 
     private static void TryDeleteTemporaryRepository(string tempRepositoryPath, Action<string, string> log)
