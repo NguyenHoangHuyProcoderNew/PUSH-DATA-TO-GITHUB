@@ -1,5 +1,0 @@
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB\src\PushDataToGitHub.App\bin\Release\net8.0-windows\win-x64\publish\PushDataToGitHub.App.exe
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB\src\PushDataToGitHub.App\bin\Release\net8.0-windows\win-x64\publish\PushDataToGitHub.App.dll
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB\src\PushDataToGitHub.App\bin\Release\net8.0-windows\win-x64\publish\PushDataToGitHub.App.deps.json
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB\src\PushDataToGitHub.App\bin\Release\net8.0-windows\win-x64\publish\PushDataToGitHub.App.runtimeconfig.json
-D:\MY PROJECT\PUSH-DATA-TO-GITHUB\src\PushDataToGitHub.App\bin\Release\net8.0-windows\win-x64\publish\PushDataToGitHub.App.pdb
